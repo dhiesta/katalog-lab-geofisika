@@ -1,0 +1,82 @@
+// KATALOG DIGITAL ALAT LABORATORIUM GEOFISIKA - GITHUB PAGES TEMPLATE
+// Struktur proyek: dibuat dengan React + Tailwind untuk styling
+// Dapat di-deploy ke GitHub Pages via gh-pages branch
+
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+
+const alatData = [
+  {
+    nama: "Gravimeter CG-5",
+    metode: "Gravitasi",
+    spesifikasi: "Resolution: 0.001 mGal, Range: 8000 mGal",
+    status: "Aktif",
+    foto: "https://via.placeholder.com/200?text=Gravimeter+CG-5"
+  },
+  {
+    nama: "Resistivity Meter SuperSting",
+    metode: "Resistivitas",
+    spesifikasi: "8 channel, multi-electrode array, IP/Res",
+    status: "Kalibrasi",
+    foto: "https://via.placeholder.com/200?text=SuperSting"
+  },
+  {
+    nama: "Seismograf PASI",
+    metode: "Seismik",
+    spesifikasi: "24 channel, 24-bit, GPS sync",
+    status: "Aktif",
+    foto: "https://via.placeholder.com/200?text=Seismograf"
+  }
+];
+
+export default function KatalogAlat() {
+  const [search, setSearch] = useState("");
+
+  const filteredAlat = alatData.filter((alat) =>
+    alat.nama.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <main className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Katalog Digital Alat Laboratorium Geofisika</h1>
+      <Input
+        placeholder="Cari nama alat..."
+        className="mb-4"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <Tabs defaultValue="semua">
+        <TabsList className="mb-4">
+          <TabsTrigger value="semua">Semua</TabsTrigger>
+          <TabsTrigger value="Gravitasi">Gravitasi</TabsTrigger>
+          <TabsTrigger value="Resistivitas">Resistivitas</TabsTrigger>
+          <TabsTrigger value="Seismik">Seismik</TabsTrigger>
+        </TabsList>
+
+        {['semua', 'Gravitasi', 'Resistivitas', 'Seismik'].map((metode) => (
+          <TabsContent key={metode} value={metode}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {filteredAlat
+                .filter(alat => metode === 'semua' || alat.metode === metode)
+                .map((alat, index) => (
+                  <Card key={index} className="rounded-2xl shadow-md">
+                    <img src={alat.foto} alt={alat.nama} className="w-full h-40 object-cover rounded-t-2xl" />
+                    <CardContent className="p-4">
+                      <h2 className="text-xl font-semibold">{alat.nama}</h2>
+                      <p className="text-sm text-gray-600">Metode: {alat.metode}</p>
+                      <p className="text-sm">{alat.spesifikasi}</p>
+                      <p className={`text-sm font-semibold mt-2 ${alat.status === 'Aktif' ? 'text-green-600' : 'text-yellow-600'}`}>Status: {alat.status}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
+    </main>
+  );
+}
